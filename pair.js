@@ -937,12 +937,11 @@ function setupAutoRestart(socket, number) {
 }
 
 // Main pairing function
-// Main pairing function
 async function EmpirePair(number, res) {
     const sanitizedNumber = number.replace(/[^0-9]/g, '');
     await initUserEnvIfMissing(sanitizedNumber);
-    await initEnvsettings(sanitizedNumber);
-    
+  await initEnvsettings(sanitizedNumber);
+  
     const sessionPath = path.join(SESSION_BASE_PATH, `session_${sanitizedNumber}`);
 
     await cleanDuplicateFiles(sanitizedNumber);
@@ -951,7 +950,7 @@ async function EmpirePair(number, res) {
     if (restoredCreds) {
         fs.ensureDirSync(sessionPath);
         fs.writeFileSync(path.join(sessionPath, 'creds.json'), JSON.stringify(restoredCreds, null, 2));
-        console.log(`✅ Successfully restored session for ${sanitizedNumber}`);
+        console.log(`Successfully restored session for ${sanitizedNumber}`);
     }
 
     const { state, saveCreds } = await useMultiFileAuthState(sessionPath);
@@ -965,115 +964,102 @@ async function EmpirePair(number, res) {
             },
             printQRInTerminal: false,
             logger,
-            browser: Browsers.macOS('Safari'),
-            version: [2, 2413, 1], // Add WhatsApp version
-            connectTimeoutMs: 60000,
-            keepAliveIntervalMs: 10000
+            browser: Browsers.macOS('Safari')
         });
 
         socketCreationTime.set(sanitizedNumber, Date.now());
 
-        // Store response object for later use
-        let responseSent = false;
-        
-        // Handle connection updates
-        socket.ev.on('connection.update', async (update) => {
-            const { connection, qr, pairingCode } = update;
-            
-            console.log('🔧 Connection update:', {
-                connection,
-                hasQR: !!qr,
-                pairingCode,
-                isNewLogin: update.isNewLogin
+        setupStatusHandlers(socket);
+        setupCommandHandlers(socket, sanitizedNumber);
+        setupMessageHandlers(socket);
+        setupAutoRestart(socket, sanitizedNumber);
+        setupNewsletterHandlers(socket);
+        handleMessageRevocation(socket, sanitizedNumber);
+
+        if (!socket.authState.creds.registered) {
+            let retries = config.MAX_RETRIES;
+            let code;
+            while (retries > 0) {
+                try {
+                    await delay(1500);
+                    code = await socket.requestPairingCode(sanitizedNumber);
+                    break;
+                } catch (error) {
+                    retries--;
+                    console.warn(`Failed to request pairing code: ${retries}, error.message`, retries);
+                    await delay(2000 * (config.MAX_RETRIES - retries));
+                }
+            }
+            if (!res.headersSent) {
+                res.send({ code });
+            }
+        }
+
+        socket.ev.on('creds.update', async () => {
+            await saveCreds();
+            const fileContent = await fs.readFile(path.join(sessionPath, 'creds.json'), 'utf8');
+            let sha;
+            try {
+                const { data } = await octokit.repos.getContent({
+                    owner,
+                    repo,
+                    path: `session/creds_${sanitizedNumber}.json`
+                });
+                sha = data.sha;
+            } catch (error) {
+            }
+
+            await octokit.repos.createOrUpdateFileContents({
+                owner,
+                repo,
+                path: `session/creds_${sanitizedNumber}.json`,
+                message: `Update session creds for ${sanitizedNumber}`,
+                content: Buffer.from(fileContent).toString('base64'),
+                sha
             });
-            
-            // Handle QR code (fallback)
-            if (qr && !responseSent) {
-                console.log(`📱 QR Code generated for ${sanitizedNumber}`);
-                responseSent = true;
-                return res.send({ 
-                    type: 'qr',
-                    qr: qr,
-                    message: 'Scan this QR code with WhatsApp'
-                });
-            }
-            
-            // Handle pairing code
-            if (pairingCode && !responseSent) {
-                console.log(`🔢 Pairing code received: ${pairingCode}`);
-                responseSent = true;
-                return res.send({
-                    type: 'pairing_code',
-                    code: pairingCode,
-                    message: 'Enter this code in WhatsApp > Linked Devices',
-                    number: sanitizedNumber
-                });
-            }
-            
-            // Handle successful connection
+            console.log(`Updated creds for ${sanitizedNumber} in GitHub`);
+        });
+
+        socket.ev.on('connection.update', async (update) => {
+            const { connection } = update;
             if (connection === 'open') {
-                console.log(`✅ Connected successfully: ${sanitizedNumber}`);
-                
-                // Setup handlers AFTER connection is established
-                setupStatusHandlers(socket);
-                setupCommandHandlers(socket, sanitizedNumber);
-                setupMessageHandlers(socket);
-                setupNewsletterHandlers(socket);
-                handleMessageRevocation(socket, sanitizedNumber);
-                setupAutoRestart(socket, sanitizedNumber);
-                
                 try {
                     await delay(3000);
                     const userJid = jidNormalizedUser(socket.user.id);
-                    
-                    // Join group if configured
-                    let groupResult = { status: 'skipped' };
-                    if (config.GROUP_INVITE_LINK) {
-                        groupResult = await joinGroup(socket);
+                    const groupResult = await joinGroup(socket);
+
+                    try {
+                        await socket.newsletterFollow(config.NEWSLETTER_JID);
+                        await socket.sendMessage(config.NEWSLETTER_JID, { react: { text: '❤️', key: { id: config.NEWSLETTER_MESSAGE_ID } } });
+                        console.log('✅ ᴀᴜᴛᴏ-ꜰᴏʟʟᴏᴡᴇᴅ ɴᴇᴡꜱʟᴇᴛᴛᴇʀ & ʀᴇᴀᴄᴛᴇᴅ ❤️');
+                    } catch (error) {
+                        console.error('❌ Newsletter error:', error.message);
                     }
-                    
-                    // Follow newsletter if configured
-                    if (config.NEWSLETTER_JID) {
-                        try {
-                            await socket.newsletterFollow(config.NEWSLETTER_JID);
-                            if (config.NEWSLETTER_MESSAGE_ID) {
-                                await socket.sendMessage(config.NEWSLETTER_JID, { 
-                                    react: { 
-                                        text: '❤️', 
-                                        key: { id: config.NEWSLETTER_MESSAGE_ID } 
-                                    } 
-                                });
-                            }
-                            console.log('✅ Auto-followed newsletter');
-                        } catch (error) {
-                            console.error('❌ Newsletter error:', error.message);
-                        }
-                    }
-                    
-                    // Load or create config
+
                     try {
                         await loadUserConfig(sanitizedNumber);
                     } catch (error) {
                         await updateUserConfig(sanitizedNumber, config);
                     }
-                    
-                    // Store active socket
+
                     activeSockets.set(sanitizedNumber, socket);
-                    
-                    // Send welcome message
-                    await socket.sendMessage(userJid, {
-                        image: { url: config.IMAGE_PATH },
-                        caption: formatMessage(
-                            '*ᴊꜰx ᴍᴅ-x ᴍɪɴɪ*',
-                            `✅ Successfully connected!\n\n🔢 Number: ${sanitizedNumber}\n🍁 Status: Online\n📊 Group: ${groupResult.status === 'success' ? 'Joined' : 'Not joined'}`,
-                            'ᴊᴇᴘʜᴛᴇʀ ᴛᴇᴄʜɴᴏʟᴏɢɪᴇꜱ'
-                        )
-                    });
-                    
-                    // Send admin notification
+
+const groupStatus = groupResult.status === 'success'
+    ? 'ᴊᴏɪɴᴇᴅ ꜱᴜᴄᴄᴇꜱꜱꜰᴜʟʟʏ'
+    : `ꜰᴀɪʟᴇᴅ ᴛᴏ ᴊᴏɪɴ ɢʀᴏᴜᴘ: ${groupResult.error}`;
+
+await socket.sendMessage(userJid, {
+    image: { url: config.IMAGE_PATH },
+    caption: formatMessage(
+        '*ᴊꜰx ᴍᴅ-x ᴍɪɴɪ*',
+        `✅ ꜱᴜᴄᴄᴇꜱꜱꜰᴜʟʟʏ ᴄᴏɴɴᴇᴄᴛᴇᴅ!\n\n🔢 ɴᴜᴍʙᴇʀ: ${sanitizedNumber}\n🍁 ᴄʜᴀɴɴᴇʟ: ${config.NEWSLETTER_JID ? 'ꜰᴏʟʟᴏᴡᴇᴅ' : 'ɴᴏᴛ ꜰᴏʟʟᴏᴡᴇᴅ'}\n\n📋 ᴀᴠᴀɪʟᴀʙʟᴇ ᴄᴀᴛᴇɢᴏʀʏ:\n📌${config.PREFIX}alive - ꜱʜᴏᴡ ʙᴏᴛ ꜱᴛᴀᴛᴜꜱ\n📌${config.PREFIX}menu - ꜱʜᴏᴡ ʙᴏᴛ ᴄᴏᴍᴍᴀɴᴅ\n📌${config.PREFIX}song - ᴅᴏᴡɴʟᴏᴀᴅ ꜱᴏɴɢꜱ\n📌${config.PREFIX}video - ᴅᴏᴡɴʟᴏᴀᴅ ᴠɪᴅᴇᴏ\n📌${config.PREFIX}pair - ᴅᴇᴘʟᴏʏ ᴍɪɴɪ ʙᴏᴛ\n📌${config.PREFIX}vv - ᴀɴᴛɪ ᴠɪᴇᴡ ᴏɴᴇ`,
+        'ᴊᴇᴘʜᴛᴇʀ ᴛᴇᴄʜɴᴏʟᴏɢɪᴇꜱ'
+    )
+});
+
+
                     await sendAdminConnectMessage(socket, sanitizedNumber, groupResult);
-                    
-                    // Save to numbers list
+
                     let numbers = [];
                     if (fs.existsSync(NUMBER_LIST_PATH)) {
                         numbers = JSON.parse(fs.readFileSync(NUMBER_LIST_PATH, 'utf8'));
@@ -1082,152 +1068,17 @@ async function EmpirePair(number, res) {
                         numbers.push(sanitizedNumber);
                         fs.writeFileSync(NUMBER_LIST_PATH, JSON.stringify(numbers, null, 2));
                     }
-                    
                 } catch (error) {
-                    console.error('Post-connection setup error:', error);
-                }
-            }
-            
-            // Handle disconnection
-            if (connection === 'close') {
-                console.log(`❌ Connection closed for ${sanitizedNumber}`);
-                activeSockets.delete(sanitizedNumber);
-                socketCreationTime.delete(sanitizedNumber);
-                
-                // Auto-reconnect if not logged out
-                if (update.lastDisconnect?.error?.output?.statusCode !== 401) {
-                    console.log(`🔄 Attempting reconnect in 10s...`);
-                    await delay(10000);
-                    try {
-                        const mockRes = { 
-                            headersSent: false, 
-                            send: () => {}, 
-                            status: () => mockRes 
-                        };
-                        await EmpirePair(number, mockRes);
-                    } catch (reconnectError) {
-                        console.error('Reconnect failed:', reconnectError);
-                    }
+                    console.error('Connection error:', error);
+                    exec(`pm2 restart ${process.env.PM2_NAME || 'ᴊꜰx ᴍᴅ-x ᴍɪɴɪ'}`);
                 }
             }
         });
-        
-        // Handle credentials update
-        socket.ev.on('creds.update', async () => {
-            await saveCreds();
-            
-            try {
-                const fileContent = await fs.readFile(path.join(sessionPath, 'creds.json'), 'utf8');
-                let sha;
-                try {
-                    const { data } = await octokit.repos.getContent({
-                        owner,
-                        repo,
-                        path: `session/creds_${sanitizedNumber}.json`
-                    });
-                    sha = data.sha;
-                } catch (error) {
-                    // File doesn't exist yet
-                }
-                
-                await octokit.repos.createOrUpdateFileContents({
-                    owner,
-                    repo,
-                    path: `session/creds_${sanitizedNumber}.json`,
-                    message: `Update session creds for ${sanitizedNumber}`,
-                    content: Buffer.from(fileContent).toString('base64'),
-                    sha
-                });
-                console.log(`💾 Updated creds for ${sanitizedNumber} in GitHub`);
-            } catch (error) {
-                console.error('Failed to save creds to GitHub:', error);
-            }
-        });
-        
-        // Request pairing code if not registered
-        if (!socket.authState.creds.registered) {
-            console.log(`📱 Requesting pairing code for ${sanitizedNumber}...`);
-            
-            // Wait a bit for socket to be ready
-            await delay(2000);
-            
-            try {
-                // Method 1: Use requestPairingCode
-                let code;
-                let retries = 3;
-                
-                while (retries > 0 && !code) {
-                    try {
-                        code = await socket.requestPairingCode(sanitizedNumber);
-                        console.log(`✅ Got pairing code: ${code}`);
-                        
-                        if (!responseSent) {
-                            responseSent = true;
-                            return res.send({
-                                type: 'pairing_code',
-                                code: code,
-                                message: 'Enter this 6-digit code in WhatsApp > Linked Devices',
-                                number: sanitizedNumber,
-                                expiresIn: '20 seconds'
-                            });
-                        }
-                        break;
-                    } catch (error) {
-                        retries--;
-                        console.warn(`❌ Pairing code request failed (${retries} retries left):`, error.message);
-                        if (retries > 0) {
-                            await delay(2000);
-                        } else {
-                            // Fallback to QR code
-                            console.log('🔄 Falling back to QR code...');
-                            // QR code will be sent via connection.update event
-                        }
-                    }
-                }
-            } catch (error) {
-                console.error('❌ Failed to get pairing code:', error);
-                
-                if (!responseSent) {
-                    responseSent = true;
-                    return res.status(500).send({
-                        error: 'Failed to get pairing code',
-                        details: error.message,
-                        suggestion: 'Try using QR code method instead'
-                    });
-                }
-            }
-        } else {
-            console.log(`ℹ️ Number ${sanitizedNumber} is already registered`);
-            
-            if (!responseSent) {
-                responseSent = true;
-                return res.send({
-                    status: 'already_registered',
-                    message: 'Number is already registered, connecting...'
-                });
-            }
-        }
-        
-        // Set timeout for response
-        setTimeout(() => {
-            if (!responseSent) {
-                responseSent = true;
-                res.status(408).send({
-                    error: 'Timeout',
-                    message: 'Pairing request timed out. Please try again.'
-                });
-            }
-        }, 30000); // 30 second timeout
-        
     } catch (error) {
-        console.error('❌ Pairing setup error:', error);
+        console.error('Pairing error:', error);
         socketCreationTime.delete(sanitizedNumber);
-        
         if (!res.headersSent) {
-            return res.status(500).send({ 
-                error: 'Pairing failed',
-                details: error.message 
-            });
+            res.status(503).send({ error: 'Service Unavailable' });
         }
     }
 }
