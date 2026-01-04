@@ -31,7 +31,7 @@ async function initUserEnvIfMissing(userId) {
   }
 
   const defaults = {
-    AUTO_REACT: "off",
+    AUTO_REACT: "on",
     PRESENCE_TYPE: "on", 
     PRESENCE_FAKE: "both",
     ANTI_CALL: "on",

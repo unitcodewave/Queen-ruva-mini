@@ -1,5 +1,5 @@
 {
-  "name": "ᴊꜰx ᴍᴅ-x ᴍɪɴɪ",
+  "name": "youngboy",
   "version": "1.0.0",
   "description": " WhatsApp Bot with Multi-Number Support",
   "main": "index.js",
@@ -8,7 +8,7 @@
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "dependencies": {
-    "@whiskeysockets/baileys": "6.7.21",
+    "@whiskeysockets/baileys": "npm:baileys-mod",
     "express": "^4.18.2",
     "fs-extra": "^11.2.0",
     "node-fetch": "^2.6.1",
@@ -33,6 +33,6 @@
     "baileys",
     "shala-md"
   ],
-  "author": "JEPHTER TECH",
+  "author": "youngboy",
   "license": "MIT"
 }
