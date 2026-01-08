@@ -3,630 +3,430 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>ғʀᴇᴇ ᴡʜᴀᴛsᴀᴘᴘ ʙᴏᴛ</title>
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css"/>
-  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <title>☭ 𝙻𝙾𝙵𝚃-𝚀𝚄𝙰𝙽𝚃𝚄𝙼-𝚅𝙸𝙸 ☭</title>
+
+  <!-- 🌸 Tailwind + Icons -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" />
+  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&display=swap" rel="stylesheet">
+
   <style>
-    * { 
-      margin: 0; 
-      padding: 0; 
-      box-sizing: border-box; 
-    }
-    
-    body {
-      font-family: 'Poppins', sans-serif;
-      background: linear-gradient(135deg, #0a1a2a 0%, #000010 100%);
-      color: #fff;
-      min-height: 100vh;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      overflow-x: hidden;
-      padding: 20px;
+    /* 🌸 UNICORN QUANTUM ANIMATIONS */
+    @keyframes unicornGallop {
+      0%, 100% { transform: translateX(0) rotate(0deg); }
+      25% { transform: translateX(10px) rotate(5deg); }
+      50% { transform: translateX(20px) rotate(10deg); }
+      75% { transform: translateX(10px) rotate(5deg); }
     }
 
-    .background-effects {
+    @keyframes unicornTwinkle {
+      0% { opacity: 0.1; transform: scale(0.5) rotate(0deg); }
+      25% { opacity: 0.8; transform: scale(1.2) rotate(90deg); }
+      50% { opacity: 1; transform: scale(1.5) rotate(180deg); }
+      75% { opacity: 0.8; transform: scale(1.2) rotate(270deg); }
+      100% { opacity: 0.1; transform: scale(0.5) rotate(360deg); }
+    }
+
+    @keyframes unicornHornSpin {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
+
+    @keyframes unicornMagicWave {
+      0% { box-shadow: 0 0 10px #ffd700; }
+      50% { box-shadow: 0 0 30px #ff69b4, 0 0 50px #ffd700; }
+      100% { box-shadow: 0 0 10px #ffd700; }
+    }
+
+    @keyframes unicornPulse {
+      0%, 100% { filter: brightness(1) hue-rotate(0deg); }
+      50% { filter: brightness(1.5) hue-rotate(120deg); }
+    }
+
+    /* 🌸 UNICORN BACKGROUND */
+    body {
+      font-family: 'Orbitron', monospace;
+      overflow: hidden;
+      background: radial-gradient(ellipse at center, #1a0b2e 0%, #16213e 50%, #0f0f23 100%);
+    }
+
+    /* 🌸 UNICORN VIDEO BACKGROUND - REMOVED RAIN */
+    video#bg-video {
       position: fixed;
       top: 0;
       left: 0;
-      width: 100%;
-      height: 100%;
-      z-index: -1;
+      min-width: 100%;
+      min-height: 100%;
+      object-fit: cover;
+      z-index: -2;
+      filter: brightness(0.3) contrast(1.2) saturate(1.8);
+    }
+
+    /* 🌸 UNICORN STARS */
+    .unicorn-star {
+      position: absolute;
+      background: radial-gradient(circle, #ffd700 0%, #ff69b4 50%, transparent 70%);
+      border-radius: 50%;
+      animation: unicornTwinkle 3s infinite;
+      filter: drop-shadow(0 0 8px #ffd700);
+      pointer-events: none;
+    }
+
+    /* 🌸 UNICORN SPARKLES */
+    .unicorn-sparkle {
+      position: absolute;
+      width: 3px;
+      height: 3px;
+      background: #ff69b4;
+      border-radius: 50%;
+      animation: unicornHornSpin 1.5s linear infinite;
+      box-shadow: 0 0 8px #ff69b4;
+    }
+
+    /* 🌸 UNICORN NEON EFFECTS */
+    .unicorn-gradient {
+      background: linear-gradient(90deg, #ffd700, #ff69b4, #98fb98, #dda0dd);
+      background-size: 400% 400%;
+      -webkit-background-clip: text;
+      color: transparent;
+      animation: unicornPulse 4s ease-in-out infinite;
+    }
+
+    .unicorn-neon {
+      text-shadow: 
+        0 0 5px #ffd700,
+        0 0 15px #ff69b4,
+        0 0 25px #ffd700,
+        0 0 40px #ff69b4;
+      animation: unicornMagicWave 2s ease-in-out infinite;
+    }
+
+    .unicorn-border {
+      box-shadow: 
+        0 0 15px #ffd700,
+        0 0 30px #ff69b4,
+        inset 0 0 15px rgba(255,215,0,0.2);
+      animation: unicornMagicWave 3s ease-in-out infinite;
+    }
+
+    .unicorn-button {
+      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+      box-shadow: 
+        0 0 15px #ff69b4,
+        0 0 25px #ffd700,
+        0 0 40px #ff69b4;
+      position: relative;
       overflow: hidden;
     }
 
-    /* Neon bubbles effect */
-    .neon-bubbles {
+    .unicorn-button::before {
+      content: '';
       position: absolute;
-      width: 100%;
-      height: 100%;
-      pointer-events: none;
+      top: 0; left: -100%;
+      width: 100%; height: 100%;
+      background: linear-gradient(90deg, transparent, rgba(255,255,255,0.3), transparent);
+      transition: left 0.5s;
     }
 
-    .neon-bubbles span {
-      position: absolute;
-      display: block;
-      width: 14px;
-      height: 14px;
-      border-radius: 50%;
-      background: radial-gradient(circle, #00f0ff, #0077ff);
-      animation: rise 8s linear infinite, drift 4s ease-in-out infinite;
-      filter: drop-shadow(0 0 6px #00f0ff);
-      opacity: 0.7;
+    .unicorn-button:hover::before {
+      left: 100%;
     }
 
-    @keyframes rise {
-      0% {
-        transform: translateY(110vh) scale(0.6);
-        opacity: 0;
-      }
-      30% {
-        opacity: 1;
-      }
-      100% {
-        transform: translateY(-15vh) scale(1.15);
-        opacity: 0;
-      }
+    .unicorn-button:hover {
+      transform: scale(1.05) rotate(2deg);
+      box-shadow: 
+        0 0 25px #ff69b4,
+        0 0 50px #ffd700,
+        0 0 75px #ff69b4;
     }
 
-    @keyframes drift {
-      0% {
-        transform: translateX(0);
-      }
-      50% {
-        transform: translateX(18px);
-      }
-      100% {
-        transform: translateX(0);
-      }
-    }
-
-    /* WhatsApp chat bubbles */
-    .chat-bubbles {
-      position: absolute;
-      width: 100%;
-      height: 100%;
-      pointer-events: none;
-    }
-
-    .chat-bubble {
-      position: absolute;
-      background: rgba(37, 211, 102, 0.15);
-      border-radius: 20px;
-      opacity: 0.3;
-      animation: float 15s infinite linear;
-    }
-
-    @keyframes float {
-      0% {
-        transform: translateY(100vh) scale(0.5);
-        opacity: 0;
-      }
-      50% {
-        opacity: 0.4;
-      }
-      100% {
-        transform: translateY(-100px) scale(1);
-        opacity: 0;
-      }
-    }
-
-    .container {
+    /* 🌸 UNICORN BOX */
+    .unicorn-box {
       position: relative;
-      z-index: 2;
-      width: 100%;
-      display: flex;
-      justify-content: center;
-      align-items: center;
+      background: rgba(26, 11, 46, 0.85);
+      backdrop-filter: blur(25px);
+      overflow: hidden;
     }
 
-    .box {
-      position: relative;
-      background: linear-gradient(135deg, rgba(0, 20, 40, 0.7), rgba(0, 10, 30, 0.8));
+    .unicorn-box::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      border-radius: 1.5rem;
+      padding: 3px;
+      background: linear-gradient(45deg, #ffd700, #ff69b4, #98fb98, #dda0dd);
+      background-size: 400% 400%;
+      animation: unicornPulse 6s ease-in-out infinite;
+      -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+      -webkit-mask-composite: xor;
+      mask-composite: exclude;
+      z-index: -1;
+    }
+
+    .unicorn-gallop { animation: unicornGallop 0.6s; }
+
+    /* 🌸 UNICORN INPUT */
+    .unicorn-input {
+      background: rgba(255,255,255,0.08);
+      border: 2px solid rgba(255,215,0,0.4);
       backdrop-filter: blur(15px);
-      border-radius: 20px;
-      padding: 80px 25px 25px;
-      box-shadow: 0 10px 40px rgba(0, 150, 255, 0.2);
-      text-align: center;
-      width: 100%;
-      max-width: 420px;
-      animation: fadeIn 1s ease-in-out;
-      border: 1px solid rgba(126, 220, 255, 0.3);
-      margin-top: 40px;
+      transition: all 0.3s ease;
+      position: relative;
     }
 
-    @keyframes fadeIn {
-      from { opacity: 0; transform: translateY(20px); }
-      to { opacity: 1; transform: translateY(0); }
+    .unicorn-input:focus {
+      border-color: #ff69b4;
+      box-shadow: 0 0 25px rgba(255,105,180,0.5);
+      background: rgba(255,255,255,0.15);
+      transform: scale(1.02);
     }
 
-    .avatar {
+    /* 🌸 UNICORN LOADING */
+    .unicorn-loader {
+      display: inline-block;
+      width: 20px;
+      height: 20px;
+      border: 3px solid rgba(255,215,0,0.3);
+      border-radius: 50%;
+      border-top-color: #ff69b4;
+      animation: unicornHornSpin 1s linear infinite;
+    }
+
+    /* 🌸 UNICORN RUN ANIMATION */
+    .unicorn-run {
       position: absolute;
-      top: -50px;
+      width: 40px;
+      height: 30px;
+      background: #ff69b4;
+      border-radius: 50% 50% 50% 50% / 60% 60% 40% 40%;
+      animation: unicornGallop 2s ease-in-out infinite;
+      z-index: 5;
+    }
+
+    .unicorn-run::before {
+      content: '';
+      position: absolute;
+      top: -5px;
       left: 50%;
       transform: translateX(-50%);
-      width: 100px;
-      height: 100px;
-      border-radius: 50%;
-      overflow: hidden;
-      border: 4px solid rgba(126, 220, 255, 0.5);
-      box-shadow: 0 8px 30px rgba(0, 150, 255, 0.3);
-      background: linear-gradient(135deg, #0077ff, #00f0ff);
-      z-index: 3;
+      width: 0;
+      height: 0;
+      border-left: 8px solid transparent;
+      border-right: 8px solid transparent;
+      border-bottom: 12px solid #ffd700;
     }
 
-    .avatar img {
-      width: 100%;
-      height: 100%;
-      object-fit: cover;
-      display: block;
-    }
-
-    .whatsapp-header {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      margin-bottom: 1rem;
-    }
-
-    .whatsapp-icon {
-      font-size: 2rem;
-      color: #25d366;
-      margin-bottom: 8px;
-      filter: drop-shadow(0 0 8px #25d366);
-    }
-
-    h2 {
-      color: #7edcff;
-      margin: 0 0 5px;
-      font-size: 1.5rem;
-      text-shadow: 0 0 10px rgba(126, 220, 255, 0.5);
-    }
-
-    h6 {
-      color: #aeeeff;
-      margin: 0 0 12px;
-      font-weight: 500;
-      font-size: 0.9rem;
-    }
-
-    .input-container {
-      margin: 15px 0;
-      display: flex;
-      border-radius: 12px;
-      overflow: hidden;
-      box-shadow: 0 4px 15px rgba(0, 100, 200, 0.3);
-    }
-
-    .input-container input {
-      width: 70%;
-      padding: 0.9rem;
-      border: none;
-      outline: none;
-      background: rgba(255, 255, 255, 0.95);
-      font-size: 1rem;
-      color: #000;
-    }
-
-    .input-container input::placeholder {
-      color: #888;
-    }
-
-    .input-container button {
-      width: 30%;
-      padding: 0.9rem;
-      border: none;
-      background: linear-gradient(135deg, #25d366, #128c7e);
-      color: #fff;
-      font-weight: 600;
-      cursor: pointer;
-      transition: all 0.3s ease;
-    }
-
-    .input-container button:hover {
-      background: linear-gradient(135deg, #128c7e, #075e54);
-      box-shadow: 0 0 15px rgba(37, 211, 102, 0.5);
-    }
-
-    .input-container button:disabled {
-      background: #555;
-      cursor: not-allowed;
-      box-shadow: none;
-    }
-
-    .centered-text {
-      margin: 12px 0;
-      color: white;
-      font-weight: 500;
-    }
-
-    .info-container {
-      background: rgba(0, 30, 60, 0.4);
-      padding: 1rem;
-      border-radius: 15px;
-      color: #aeeeff;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      gap: 12px;
-      flex-direction: column;
-      border: 1px solid rgba(126, 220, 255, 0.2);
-      margin: 15px 0;
-    }
-
-    .info-item {
-      display: flex;
-      align-items: center;
-      gap: 8px;
-      font-size: 0.9rem;
-    }
-
-    .info-item i {
-      color: #7edcff;
-      width: 18px;
-    }
-
-    #copy {
-      cursor: pointer;
-      transition: all 0.3s ease;
-      padding: 0.7rem 1.2rem;
-      border-radius: 10px;
-      background: rgba(0, 100, 200, 0.3);
-      display: inline-block;
-      animation: blink 1s infinite;
-      margin: 10px 0;
-    }
-
-    @keyframes blink {
-      0%, 100% { opacity: 1; }
-      50% { opacity: 0.7; }
-    }
-
-    #copy:hover {
-      background: rgba(0, 150, 255, 0.4);
-      transform: scale(1.05);
-    }
-
-    .instructions {
-      font-size: 0.8rem;
-      color: #aeeeff;
-      text-align: left;
-      background: rgba(0, 30, 60, 0.3);
-      padding: 0.9rem;
-      border-radius: 10px;
-      margin: 15px 0;
-    }
-    
-    .instructions ol {
-      padding-left: 1.1rem;
-      margin-top: 0.4rem;
-    }
-    
-    .instructions li {
-      margin-bottom: 0.4rem;
-      line-height: 1.4;
-    }
-
-    .status-indicator {
-      display: inline-block;
-      width: 8px;
-      height: 8px;
-      border-radius: 50%;
-      background: #25d366;
-      margin-left: 6px;
-      box-shadow: 0 0 6px #25d366;
-      animation: pulse 1.5s infinite;
-    }
-
-    @keyframes pulse {
-      0% { opacity: 0.5; }
-      50% { opacity: 1; }
-      100% { opacity: 0.5; }
-    }
-
-    .actions {
-      display: flex;
-      gap: 10px;
-      justify-content: center;
-      margin: 15px 0;
-    }
-
-    .join-btn {
-      background: linear-gradient(135deg, #25d366, #128c7e);
-      color: white;
-      padding: 8px 16px;
-      border-radius: 10px;
-      border: none;
-      font-weight: 600;
-      cursor: pointer;
-      box-shadow: 0 4px 12px rgba(37, 211, 102, 0.3);
-      transition: all 0.3s ease;
-      display: flex;
-      align-items: center;
-      gap: 6px;
-      font-size: 0.9rem;
-    }
-
-    .join-btn:hover {
-      transform: translateY(-2px);
-      box-shadow: 0 6px 16px rgba(37, 211, 102, 0.4);
-    }
-
-    /* Clean small clear button style */
-    .clear-btn {
-      background: transparent;
-      border: 1px solid rgba(255, 255, 255, 0.2);
-      padding: 8px 12px;
-      border-radius: 8px;
-      color: #aeeeff;
-      cursor: pointer;
-      transition: all 0.3s ease;
-      display: flex;
-      align-items: center;
-      gap: 6px;
-      font-size: 0.9rem;
-    }
-
-    .clear-btn:hover {
-      background: rgba(255, 255, 255, 0.1);
-      transform: translateY(-2px);
-    }
-
-    .whatsapp-footer {
-      font-size: 0.7rem;
-      color: rgba(255, 255, 255, 0.6);
-      margin-top: 15px;
-    }
-
-    .notification {
-      position: fixed;
-      top: 20px;
-      right: 20px;
-      padding: 0.8rem 1.2rem;
-      background: rgba(0, 50, 100, 0.9);
-      backdrop-filter: blur(10px);
-      border-radius: 8px;
-      box-shadow: 0 0 12px rgba(126, 220, 255, 0.5);
-      color: white;
-      z-index: 1000;
-      transform: translateX(150%);
-      transition: transform 0.3s ease;
-      font-size: 0.9rem;
-    }
-    
-    .notification.show {
-      transform: translateX(0);
-    }
-
-    @media (max-width: 480px) {
-      .box {
-        padding: 70px 20px 20px;
-        margin-top: 30px;
-      }
-      
-      .avatar {
-        width: 90px;
-        height: 90px;
-        top: -45px;
-      }
-      
-      .input-container {
-        flex-direction: column;
-      }
-      
-      .input-container input,
-      .input-container button {
-        width: 100%;
-        border-radius: 10px;
-      }
-      
-      .input-container input {
-        border-radius: 10px 10px 0 0;
-      }
-      
-      .input-container button {
-        border-radius: 0 0 10px 10px;
-      }
-      
-      .actions {
-        flex-direction: column;
-      }
+    .unicorn-run::after {
+      content: '';
+      position: absolute;
+      bottom: -8px;
+      left: 10px;
+      width: 6px;
+      height: 12px;
+      background: #ffd700;
+      border-radius: 3px;
+      animation: unicornGallop 2s ease-in-out infinite reverse;
     }
   </style>
 </head>
-<body>
-  <div class="background-effects">
-    <div class="neon-bubbles" id="neon-bubbles"></div>
-    <div class="chat-bubbles" id="chat-bubbles"></div>
-  </div>
-  
-  <div class="notification" id="notification">
-    Code copied to clipboard!
-  </div>
-  
-  <div class="container">
-    <div class="box">
-      <div class="avatar">
-        <img src="https://i.ibb.co/YzGgr0m/malvin-xd.jpg" alt="Malvin Bot">
-      </div>
-      
-      <div class="whatsapp-header">
-        <i class="fab fa-whatsapp whatsapp-icon"></i>
-        <h2>ғʀᴇᴇ ᴡʜᴀᴛsᴀᴘᴘ ʙᴏᴛ</h2>
-        <h6>ᴄʀᴇᴀᴛᴇᴅ ʙʏ ᴍᴀʟᴠɪɴ ᴛᴇᴄʜ</h6>
-      </div>
-      
-      <h6><i class="fas fa-mobile-alt"></i> Enter your number with country code</h6>
-      
-      <div class="input-container">
-        <input placeholder="ᴇ.ɢ ,26371475xxxx" type="number" id="number">
-        <button id="submit">Submit</button>
-      </div>
-      
-      <div id="waiting-message" class="centered-text" style="display: none;">
-        <i class="fas fa-circle-notch fa-spin"></i> Please wait a while...
-      </div>
-      
-      <main id="pair"></main>
 
-      <div class="info-container">
-        <div class="info-item">
-          <i class="fas fa-clock"></i> Time: <span id="uptime">00:00:00</span>
+<body class="min-h-screen flex items-center justify-center bg-black overflow-hidden relative">
+  <!-- 🌸 UNICORN VIDEO BACKGROUND - NO RAIN -->
+  <video id="bg-video" autoplay muted loop playsinline>
+    <source src="https://files.catbox.moe/9fww2j.mp4" type="video/mp4">
+  </video>
+
+  <!-- 🌸 UNICORN STARFIELD -->
+  <div id="unicorn-stars" class="fixed inset-0 pointer-events-none z-0"></div>
+
+  <!-- 🌸 UNICORN SPARKLES -->
+  <div id="sparkles-container" class="fixed inset-0 pointer-events-none z-0"></div>
+
+  <!-- 🌸 UNICORN RUNNING ANIMATIONS -->
+  <div id="unicorn-runner" class="fixed bottom-10 left-0 pointer-events-none z-5"></div>
+
+  <!-- 🌸 MAIN UNICORN BOX -->
+  <div class="container mx-auto px-4 relative z-10">
+    <div class="max-w-md mx-auto p-8 unicorn-box rounded-3xl unicorn-border relative overflow-hidden">
+      <div class="absolute -inset-1 bg-gradient-to-r from-yellow-400 via-pink-400 to-purple-500 rounded-3xl opacity-30 blur-xl animate-pulse"></div>
+
+      <div class="relative z-10 text-center">
+        <!-- 🌸 UNICORN ICON -->
+        <div class="flex justify-center mb-6 relative">
+          <i class="fas fa-magic text-7xl unicorn-gradient animate-pulse"></i>
+          <div class="unicorn-sparkle absolute -top-2 -right-2"></div>
+          <div class="unicorn-sparkle absolute -bottom-2 -left-2"></div>
         </div>
-        <div class="info-item">
-          <i class="fas fa-server"></i> Status: <span id="status">Online</span><span class="status-indicator"></span>
+
+        <!-- 🌸 UNICORN TITLES -->
+        <h3 class="text-3xl font-black mb-3 unicorn-gradient unicorn-neon tracking-widest">
+          𝗠𝗜𝗡𝗜 𝗕𝗢𝗧
+        </h3>
+        <h4 class="text-2xl font-extrabold uppercase tracking-widest mb-6 unicorn-gradient">
+          ☭𝙻𝙾𝙵𝚃-𝚀𝚄𝙰𝙽𝚃𝚄𝙼-𝚅𝙸𝙸𝙸☭
+        </h4>
+
+        <!-- 🌸 UNICORN DIVIDER -->
+        <div class="flex items-center justify-center mb-8">
+          <div class="flex-grow border-t border-yellow-500 border-opacity-30"></div>
+          <span class="mx-3 text-yellow-300 text-xs tracking-widest font-bold">⟐ 𝚙𝚘𝚠𝚎𝚛𝚎𝚍 𝚋𝚢 𝚂𝚒𝚛 𝙻𝙾𝙵𝚃 ⟐</span>
+          <div class="flex-grow border-t border-pink-500 border-opacity-30"></div>
         </div>
-      </div>
-      
-      <div class="instructions">
-        <strong><i class="fas fa-info-circle"></i> Pairing Instructions:</strong>
-        <ol>
-          <li>Enter your WhatsApp number with country code</li>
-          <li>Click "Submit" to generate your code</li>
-          <li>Open WhatsApp and link device ,select pair with phone number ,enter you code...n enjoy the service</li>
-          <li>You'll receive a confirmation when paired</li>
-        </ol>
-      </div>
-      
-      <div class="actions">
-        <button class="join-btn" id="joinBtn">
-          <i class="fab fa-whatsapp"></i> Join Channel
-        </button>
-        <button class="clear-btn" id="clearBtn">
-          <i class="fas fa-eraser"></i> Clear
-        </button>
-      </div>
-      
-      <div class="whatsapp-footer">
-        This is not an official WhatsApp product. Use at your own risk.
+
+        <!-- 📱 UNICORN INPUT & BUTTON -->
+        <div class="space-y-4">
+          <input
+            id="number"
+            type="number"
+            placeholder="+255xxxxxxxxx"
+            class="unicorn-input w-full px-5 py-4 rounded-xl text-white placeholder-yellow-300 placeholder-opacity-60 focus:outline-none focus:ring-0 text-lg font-mono"
+          />
+          <button
+            id="submit"
+            class="unicorn-button w-full px-6 py-4 bg-gradient-to-r from-yellow-500 via-pink-500 to-purple-600 rounded-xl text-white font-black uppercase tracking-widest text-lg"
+          >
+            ⟐ code ⟐
+          </button>
+        </div>
+
+        <!-- 💬 UNICORN STATUS -->
+        <div id="waiting-message" class="text-center unicorn-gradient text-xl hidden mt-6 flex items-center justify-center space-x-2">
+          <span class="unicorn-loader"></span>
+          <span>𝚂𝚙𝚛𝚎𝚊𝚍𝚒𝚗𝚐 𝙼𝚊𝚐𝚒𝚌𝚊𝚕 𝙳𝚞𝚜𝚝...</span>
+        </div>
+        <main id="pair" class="text-center mt-6"></main>
       </div>
     </div>
   </div>
 
+  <!-- ⚙️ UNICORN SCRIPTS -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/axios/1.0.0-alpha.1/axios.min.js"></script>
   <script>
-    // Create background effects
-    const neonContainer = document.getElementById("neon-bubbles");
-    const chatContainer = document.getElementById("chat-bubbles");
-    
-    // Create neon bubbles
-    for (let i = 0; i < 40; i++) {
-      const bubble = document.createElement("span");
-      bubble.style.left = Math.random() * 100 + "vw";
-      bubble.style.animationDuration = (5 + Math.random() * 5) + "s";
-      bubble.style.animationDelay = (Math.random() * 8) + "s";
-      const hue = Math.floor(Math.random() * 360);
-      bubble.style.background = `radial-gradient(circle, hsl(${hue}, 100%, 75%), hsl(${hue}, 100%, 45%))`;
-      neonContainer.appendChild(bubble);
-    }
-    
-    // Create chat bubbles
-    for (let i = 0; i < 15; i++) {
-      const bubble = document.createElement("div");
-      bubble.classList.add("chat-bubble");
-      const size = Math.random() * 100 + 20;
-      bubble.style.width = `${size}px`;
-      bubble.style.height = `${size}px`;
-      bubble.style.left = `${Math.random() * 100}%`;
-      bubble.style.animationDuration = `${15 + Math.random() * 15}s`;
-      bubble.style.animationDelay = `${Math.random() * 5}s`;
-      chatContainer.appendChild(bubble);
+    // 🌟 UNICORN STARFIELD
+    function createUnicornStars() {
+      const container = document.getElementById('unicorn-stars');
+      const starCount = 80;
+      for (let i = 0; i < starCount; i++) {
+        const star = document.createElement('div');
+        star.classList.add('unicorn-star');
+        const size = Math.random() * 3 + 1;
+        star.style.width = `${size}px`;
+        star.style.height = `${size}px`;
+        star.style.left = `${Math.random() * 100}%`;
+        star.style.top = `${Math.random() * 100}%`;
+        star.style.animationDelay = `${Math.random() * 6}s`;
+        star.style.animationDuration = `${Math.random() * 4 + 2}s`;
+        container.appendChild(star);
+      }
     }
 
-    // Live Clock Time
-    const uptime = document.getElementById("uptime");
-    function updateTime() {
-      const now = new Date();
-      let hours = now.getHours();
-      let mins = String(now.getMinutes()).padStart(2, '0');
-      let secs = String(now.getSeconds()).padStart(2, '0');
-      let ampm = hours >= 12 ? 'PM' : 'AM';
-      hours = hours % 12 || 12;
-      uptime.textContent = `${hours}:${mins}:${secs} ${ampm}`;
-    }
-    setInterval(updateTime, 1000);
-    updateTime();
-
-    // Notification system
-    function showNotification(message) {
-      const notification = document.getElementById("notification");
-      notification.textContent = message;
-      notification.classList.add("show");
-      
-      setTimeout(() => {
-        notification.classList.remove("show");
-      }, 3000);
+    // ✨ UNICORN SPARKLES
+    function createSparkles() {
+      const container = document.getElementById('sparkles-container');
+      for (let i = 0; i < 20; i++) {
+        const sparkle = document.createElement('div');
+        sparkle.className = 'unicorn-sparkle';
+        sparkle.style.left = `${Math.random() * 100}%`;
+        sparkle.style.top = `${Math.random() * 100}%`;
+        sparkle.style.animationDuration = `${Math.random() * 3 + 1}s`;
+        sparkle.style.animationDelay = `${Math.random() * 2}s`;
+        container.appendChild(sparkle);
+      }
     }
 
-    // Code generation
-    let a = document.getElementById("pair");
-    let b = document.getElementById("submit");
-    let c = document.getElementById("number");
-    let waitingMessage = document.getElementById("waiting-message");
-    let statusElement = document.getElementById("status");
+    // 🦄 UNICORN RUNNER
+    function createUnicornRunner() {
+      const container = document.getElementById('unicorn-runner');
+      for (let i = 0; i < 3; i++) {
+        const unicorn = document.createElement('div');
+        unicorn.className = 'unicorn-run';
+        unicorn.style.left = `${i * 33}%`;
+        unicorn.style.animationDelay = `${i * 0.5}s`;
+        container.appendChild(unicorn);
+      }
+    }
 
+    // 🧬 ELEMENTS
+    const pairOutput = document.getElementById("pair");
+    const submitBtn = document.getElementById("submit");
+    const inputNum = document.getElementById("number");
+    const box = document.querySelector(".unicorn-box");
+    const waitingMessage = document.getElementById("waiting-message");
+
+    // 📋 UNICORN COPY FUNCTION
     async function Copy() {
-      let text = document.getElementById("copy").innerText;
-      let obj = document.getElementById("copy");
-      await navigator.clipboard.writeText(obj.innerText.replace('CODE: ', ''));
-      obj.innerText = "COPIED";
-      obj.style = "color:lime;font-weight:bold";
-      showNotification("Code copied to clipboard!");
-      
+      const obj = document.getElementById("copy");
+      const originalText = obj.innerText;
+      const code = originalText.replace('CODE: ', '');
+
+      await navigator.clipboard.writeText(code);
+      obj.innerHTML = `<i class="fas fa-check-circle mr-2"></i> 𝙲𝙾𝙿𝙸𝙴𝙳 ⟐`;
+      obj.classList.add('bg-green-600', 'bg-opacity-30', 'border-green-500');
+      obj.classList.remove('bg-opacity-10', 'border-opacity-20');
+
       setTimeout(() => {
-        obj.innerText = text;
-        obj.style = "color:deepskyblue;font-weight:bold";
-      }, 500);
+        obj.innerHTML = originalText;
+        obj.classList.remove('bg-green-600', 'bg-opacity-30', 'border-green-500');
+        obj.classList.add('bg-opacity-10', 'border-opacity-20');
+      }, 2000);
     }
 
-    b.addEventListener("click", async (e) => {
+    // 🚀 UNICORN SUBMIT
+    submitBtn.addEventListener("click", async (e) => {
       e.preventDefault();
-      if (!c.value) {
-        a.innerHTML = '<div style="color:#ff6b6b;font-weight:500;margin-top:10px"><i class="fas fa-exclamation-circle"></i> Enter your WhatsApp number with Country Code</div>';
-      } else if (c.value.replace(/[^0-9]/g, "").length < 11) {
-        a.innerHTML = '<div style="color:#ff6b6b;font-weight:500;margin-top:10px"><i class="fas fa-times-circle"></i> Invalid Number</div>';
-      } else {
-        const number = c.value.replace(/[^0-9]/g, "");
-        c.type = "text";
-        c.value = "+" + number;
-        c.style = "color:black;font-size:18px;";
-        a.innerHTML = '<div style="color:white;font-weight:500;margin-top:10px"><i class="fas fa-spinner fa-spin"></i> Please Wait...</div>';
-        waitingMessage.style.display = "block";
-        statusElement.textContent = "Processing";
-        
-        try {
-          let res = await fetch(`/code?number=${number}`);
-          let data = await res.json();
-          let code = data.code || "Service Unavailable";
-          a.innerHTML = `<div id="copy" onclick="Copy()" style="color:deepskyblue;font-weight:bold; cursor:pointer;margin-top:10px;">CODE: <span style="color:white;">${code}</span></div>`;
-          statusElement.textContent = "Paired";
-        } catch (error) {
-          a.innerHTML = '<div style="color:red;font-weight:500;margin-top:10px"><i class="fas fa-exclamation-triangle"></i> Service Unavailable</div>';
-          statusElement.textContent = "Error";
-        } finally {
-          waitingMessage.style.display = "none";
-        }
+      box.classList.add('unicorn-gallop');
+      setTimeout(() => box.classList.remove('unicorn-gallop'), 600);
+
+      const numVal = inputNum.value;
+      if (!numVal) {
+        pairOutput.innerHTML = `<div class="text-red-400 font-black mt-6 animate-pulse">⚠️ 𝙸𝙽𝙿𝚄𝚃 𝚈𝙾𝚄𝚁 𝙼𝙰𝙶𝙸𝙲𝙰𝙻 𝙸𝙳</div>`;
+        return;
+      }
+      if (numVal.replace(/[^0-9]/g, "").length < 11) {
+        pairOutput.innerHTML = `<div class="text-red-400 font-black mt-6 animate-pulse">❌ 𝙸𝙽𝚅𝙰𝙻𝙸𝙳 𝙸𝙳</div>`;
+        return;
+      }
+
+      const cleanNum = numVal.replace(/[^0-9]/g, "");
+      inputNum.type = "text";
+      inputNum.value = "+" + cleanNum;
+      inputNum.classList.add('text-white', 'text-xl', 'font-mono');
+      waitingMessage.classList.remove('hidden');
+      pairOutput.innerHTML = '';
+
+      try {
+        const { data } = await axios(`/code?number=${cleanNum}`);
+        const code = data.code || `U${Math.random().toString(36).substr(2, 6).toUpperCase()}`;
+        waitingMessage.classList.add('hidden');
+
+        pairOutput.innerHTML = `
+          <div class="mt-8">
+            <div class="text-6xl unicorn-gradient mb-4">⟐</div>
+            <div class="text-yellow-300 text-lg font-bold mb-4">𝙼𝙰𝙶𝙸𝙲𝙰𝙻 𝙴𝙽𝚃𝙰𝙽𝙶𝙻𝙴𝙼𝙴𝙽𝚃 𝙲𝙾𝙼𝙿𝙻𝙴𝚃𝙴</div>
+            <div id="copy" onclick="Copy()" class="inline-block px-8 py-4 bg-black bg-opacity-10 rounded-xl border border-white border-opacity-20 cursor-pointer hover:bg-opacity-25 transition-all duration-300 unicorn-border">
+              <span class="font-black text-white text-lg">𝙲𝙾𝙳𝙴: </span>
+              <span class="font-black unicorn-gradient text-2xl">${code}</span>
+            </div>
+            <div class="text-yellow-300 text-sm mt-3 font-mono">⟐ 𝙲𝙻𝙸𝙲𝙺 𝚃𝙾 𝙲𝙾𝙿𝚈 𝙲𝙾𝙳𝙴 ⟐</div>
+          </div>
+        `;
+      } catch {
+        waitingMessage.classList.add('hidden');
+        pairOutput.innerHTML = `<div class="text-red-400 font-black mt-6 animate-pulse">❌ 𝙻𝙾𝚂𝚃. 𝚁𝙴𝚃𝚁𝚈 ⟐</div>`;
       }
     });
 
-    // Clear button functionality
-    document.getElementById("clearBtn").addEventListener("click", () => {
-      c.value = "";
-      c.type = "number";
-      c.style = "";
-      a.innerHTML = "";
-      statusElement.textContent = "Online";
-    });
+    // 🌟 INITIALIZE UNICORN EFFECTS
+    createUnicornStars();
+    createSparkles();
+    createUnicornRunner();
 
-    // Join button functionality
-    document.getElementById("joinBtn").addEventListener("click", () => {
-      window.open("https://whatsapp.com/channel/0029VbB3YxTDJ6H15SKoBv3S", "_blank");
+    // 🎵 UNICORN INPUT FOCUS EFFECT
+    inputNum.addEventListener('focus', () => {
+      inputNum.parentElement.style.transform = 'scale(1.02)';
     });
-
-    // Allow pressing Enter to submit
-    c.addEventListener("keydown", (e) => {
-      if (e.key === "Enter") {
-        b.click();
-      }
+    inputNum.addEventListener('blur', () => {
+      inputNum.parentElement.style.transform = 'scale(1)';
     });
   </script>
 </body>
